@@ -1,8 +1,7 @@
 {
-  "name": "catalogos-web",
+  "name": "catalogos-camisetikas",
   "version": "1.0.0",
   "private": true,
-  "description": "Visor web de catálogos PDF (CATÁLOGO RETRO y otros)",
   "scripts": {
     "build": "node build-list.js",
     "dev": "node build-list.js && npx --yes serve public -l 3000"

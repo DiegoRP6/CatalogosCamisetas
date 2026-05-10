@@ -1,15 +1,18 @@
 {
-  "buildCommand": "node build-list.js",
-  "outputDirectory": "public",
-  "framework": null,
+  "version": 2,
+  "cleanUrls": true,
   "headers": [
     {
-      "source": "/catalogos/(.*).pdf",
+      "source": "/(.*).pdf",
       "headers": [
         { "key": "Content-Type", "value": "application/pdf" },
         { "key": "Content-Disposition", "value": "inline" },
+        { "key": "Accept-Ranges", "value": "bytes" },
         { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" }
   ]
 }

@@ -1,30 +1,33 @@
-# Catálogos Web
+# Catálogos Camisetikas — Web
 
-Visor web estático de catálogos PDF, listo para desplegar en **Vercel**.
-Sin backend: simplemente sirve los PDFs desde `public/catalogos/` y los muestra
-en un visor con buscador.
+Sitio estático para Vercel que lista **múltiples PDFs** dinámicamente desde `public/`
+y permite seleccionar y ver cualquiera. Abre el primero por defecto.
 
-## Estructura
+## Cómo usar
 
-```
-catalogos-web/
-├─ public/
-│  ├─ index.html        # UI
-│  ├─ styles.css
-│  ├─ app.js
-│  └─ catalogos/        # <-- pon aquí tus .pdf
-├─ build-list.js        # genera public/catalogos.json en build
-├─ vercel.json
-└─ package.json
-```
+1. Genera los PDFs con el script Python (uno por cada carpeta en `imagenesCatalogos/`):
+   ```powershell
+   cd "Fotos camis"
+   .\generar_catalogos.bat
+   ```
+   Se crean archivos como:
+   - `catalogo_retro.pdf`
+   - `catalogo_mundial_1.pdf`
+   - `catalogo_mundial_2.pdf`
+   - `catalogo_chandales.pdf`
 
-## Cómo añadir catálogos
+2. Cópialo a `catalogos-web/public/`:
+   ```powershell
+   Copy-Item .\catalogo_*.pdf .\catalogos-web\public\ -Force
+   ```
 
-1. Genera el PDF con el script Python (`crear_catalogo.py`).
-2. Renómbralo a algo descriptivo, p. ej. `catalogo-retro.pdf`,
-   `catalogo-mundial.pdf`, `catalogo-chandales.pdf`.
-3. Cópialo a `catalogos-web/public/catalogos/`.
-4. Vuelve a hacer commit + push (o `vercel --prod`). Aparece automáticamente.
+3. Regenera la lista de catálogos:
+   ```powershell
+   cd catalogos-web
+   npm run build
+   ```
+
+4. Despliega en Vercel.
 
 ## Probar en local
 
@@ -32,31 +35,35 @@ catalogos-web/
 cd catalogos-web
 npm run dev
 ```
-Abre http://localhost:3000
+→ http://localhost:3000
 
-## Desplegar en Vercel
+Se abrirá automáticamente el primer catálogo. Usa la barra lateral para cambiar.
 
-### Opción A — Desde la web (más fácil)
-1. Sube esta carpeta a un repo de GitHub.
-2. En https://vercel.com/new importa el repo.
-3. **Root Directory**: `catalogos-web` (si subes todo el workspace) o `.`
-4. Framework preset: **Other**
-5. Build Command: `node build-list.js`
-6. Output Directory: `public`
+## Despliegue en Vercel
+
+### Opción A — Web (recomendado)
+1. Sube el repo a GitHub.
+2. En https://vercel.com/new selecciona el repo.
+3. **Root Directory**: `catalogos-web`
+4. **Framework**: *Other*
+5. **Build Command**: `npm run build`
+6. **Output Directory**: `public`
 7. Deploy.
 
-### Opción B — Vercel CLI
+### Opción B — CLI
 ```powershell
 cd catalogos-web
-npx vercel        # primer deploy (preview)
+npx vercel        # preview
 npx vercel --prod # producción
 ```
 
-## Notas
+## Carga progresiva
 
-- Los PDFs se sirven con `Content-Disposition: inline` para que el navegador
-  los visualice sin descargar.
-- El listado se genera en build leyendo `public/catalogos/`. Tras añadir un PDF
-  nuevo hay que volver a desplegar.
-- Vercel tiene un límite de 100 MB por archivo en plan free; los PDFs típicos
-  de catálogo entran sobrados.
+Los PDFs se generan con:
+- **4 columnas × 4 filas**: imágenes compactas (16 por página)
+- **Redimensionamiento**: máx 600×600px por imagen
+- **Compresión**: reduce peso drásticamente
+- **Linearización** (si instalas `pikepdf`): permite carga progresiva
+
+Tamaño típico por catálogo: **40-60 MB**
+

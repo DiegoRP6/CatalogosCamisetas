@@ -1,33 +1,29 @@
 /**
- * Genera public/catalogos.json con la lista de PDFs encontrados en
- * public/catalogos/. Se ejecuta en el build de Vercel.
+ * Escanea public/*.pdf y genera catalogos.json con la lista
  */
 const fs = require("fs");
 const path = require("path");
 
-const dir = path.join(__dirname, "public", "catalogos");
+const publicDir = path.join(__dirname, "public");
 const out = path.join(__dirname, "public", "catalogos.json");
 
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
 const files = fs
-  .readdirSync(dir)
+  .readdirSync(publicDir)
   .filter((f) => f.toLowerCase().endsWith(".pdf"))
   .sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
 
 const catalogos = files.map((file) => {
-  const stat = fs.statSync(path.join(dir, file));
+  const stat = fs.statSync(path.join(publicDir, file));
   const nombre = file
+    .replace(/^catalogo_/, "")
     .replace(/\.pdf$/i, "")
     .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase())
     .trim();
   return {
     archivo: file,
-    nombre: nombre.toUpperCase(),
-    url: `/catalogos/${encodeURIComponent(file)}`,
+    nombre: nombre,
+    url: `/${encodeURIComponent(file)}`,
     tamanioKB: Math.round(stat.size / 1024),
   };
 });
