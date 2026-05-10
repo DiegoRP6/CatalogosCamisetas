@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catálogos</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>CATÁLOGOS</h1>
+      <div class="topbar-right">
+        <span id="contador" class="badge"></span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <input
+          id="buscador"
+          type="search"
+          placeholder="Buscar catálogo..."
+          autocomplete="off"
+        />
+        <ul id="lista" class="lista"></ul>
+      </aside>
+
+      <section class="visor">
+        <div id="placeholder" class="placeholder">
+          <div>
+            <h2>Selecciona un catálogo</h2>
+            <p>Elige uno de la lista de la izquierda para verlo aquí mismo.</p>
+          </div>
+        </div>
+        <iframe
+          id="pdf"
+          title="Visor de PDF"
+          style="display: none"
+        ></iframe>
+        <div id="acciones" class="acciones" style="display: none">
+          <a id="abrirNueva" target="_blank" rel="noopener">Abrir en pestaña nueva</a>
+          <a id="descargar" download>Descargar PDF</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "buildCommand": "node build-list.js",
+  "outputDirectory": "public",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/catalogos/(.*).pdf",
+      "headers": [
+        { "key": "Content-Type", "value": "application/pdf" },
+        { "key": "Content-Disposition", "value": "inline" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    }
+  ]
+}
