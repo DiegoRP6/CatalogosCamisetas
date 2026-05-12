@@ -41,6 +41,7 @@ import { CatalogService } from "../../core/services/catalog.service";
               class="group relative block aspect-[4/5] rounded-2xl
                      overflow-hidden bg-ink-100 border border-ink-100
                      hover:border-ink-300 transition-colors"
+              [attr.aria-label]="s.name"
             >
               @if (s.cover) {
                 <img
@@ -48,22 +49,11 @@ import { CatalogService } from "../../core/services/catalog.service";
                   [alt]="s.name"
                   loading="lazy"
                   decoding="async"
-                  class="absolute inset-0 w-full h-full object-contain p-[10%]
+                  class="absolute inset-0 w-full h-full object-cover object-top
                          transition-transform duration-500 ease-out-soft
-                         group-hover:scale-[1.04]"
+                         group-hover:scale-[1.03]"
                 />
               }
-              <div
-                class="absolute inset-x-0 bottom-0 p-4 sm:p-5
-                       bg-gradient-to-t from-white via-white/80 to-transparent"
-              >
-                <h2 class="font-bold text-base sm:text-lg leading-tight">
-                  {{ s.name }}
-                </h2>
-                <p class="text-xs text-ink-500 mt-0.5">
-                  {{ s.count }} modelos
-                </p>
-              </div>
             </a>
           }
         </div>

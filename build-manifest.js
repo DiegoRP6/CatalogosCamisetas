@@ -16,6 +16,7 @@ const OUT_DIR = path.join(ROOT, "public");
 const OUT_FILE = path.join(OUT_DIR, "manifest.json");
 
 const IMAGE_RE = /\.(jpe?g|png|webp|avif)$/i;
+const COVER_BASE_RE = /^0+[_-]?portada$/i;
 
 function slugify(s) {
   return s
@@ -39,6 +40,14 @@ function encodePath(parts) {
   return "/" + parts.map(encodeURIComponent).join("/");
 }
 
+function basenameWithoutExt(file) {
+  return file.replace(IMAGE_RE, "");
+}
+
+function isPreferredCover(file) {
+  return COVER_BASE_RE.test(basenameWithoutExt(file));
+}
+
 function walkSection(sectionDir, sectionFolder) {
   const entries = fs.readdirSync(sectionDir, { withFileTypes: true });
   const files = entries
@@ -46,11 +55,26 @@ function walkSection(sectionDir, sectionFolder) {
     .map((e) => e.name)
     .sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
 
-  return files.map((file) => ({
-    id: `${slugify(sectionFolder)}__${slugify(file.replace(IMAGE_RE, ""))}`,
-    src: encodePath(["assets", "camisetas", sectionFolder, file]),
-    name: file.replace(IMAGE_RE, "")
-  }));
+  const preferredCover = files.find(isPreferredCover);
+  const fallbackCover = files[0];
+  const coverFile = preferredCover ?? fallbackCover ?? null;
+
+  const images = files
+    .filter((file) => file !== coverFile)
+    .map((file) => {
+      const base = basenameWithoutExt(file);
+      return {
+        id: `${slugify(sectionFolder)}__${slugify(base)}`,
+        src: encodePath(["assets", "camisetas", sectionFolder, file]),
+        name: base
+      };
+    });
+
+  const cover = coverFile
+    ? encodePath(["assets", "camisetas", sectionFolder, coverFile])
+    : null;
+
+  return { images, cover };
 }
 
 function main() {
@@ -66,13 +90,16 @@ function main() {
     .sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
 
   const sections = folders.map((folder) => {
-    const images = walkSection(path.join(CAMISETAS_DIR, folder), folder);
+    const { images, cover } = walkSection(
+      path.join(CAMISETAS_DIR, folder),
+      folder
+    );
     return {
       slug: slugify(folder),
       name: pretty(folder),
       folder,
       count: images.length,
-      cover: images[0]?.src ?? null,
+      cover,
       images
     };
   });
